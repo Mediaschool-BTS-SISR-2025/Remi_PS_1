@@ -1,0 +1,50 @@
+function Show-Menu {
+    Clear-Host
+    Write-Host "========= MENU ADMIN - Windows Server 2022 =========" -ForegroundColor Cyan
+    Write-Host "1. Afficher les informations système"
+    Write-Host "2. Lister les services en cours d'exécution"
+    Write-Host "3. Lister les utilisateurs locaux"
+    Write-Host "4. Redémarrer le serveur"
+    Write-Host "5. Quitter"
+    Write-Host "==================================================="
+
+    $choice = Read-Host "Veuillez entrer un choix (1-5)"
+    return $choice
+}
+
+do {
+    $option = Show-Menu
+
+    switch ($option) {
+        '1' {
+            Clear-Host
+            Write-Host "Informations système :" -ForegroundColor Green
+            Get-ComputerInfo | Select-Object OSName, OSVersion, CsName, WindowsProductName
+            Pause
+        }
+        '2' {
+            Clear-Host
+            Write-Host "Services en cours d'exécution :" -ForegroundColor Yellow
+            Get-Service | Where-Object {$_.Status -eq "Running"} | Sort-Object DisplayName
+            Pause
+        }
+        '3' {
+            Clear-Host
+            Write-Host "Utilisateurs locaux :" -ForegroundColor Cyan
+            Get-LocalUser | Select-Object Name, Enabled, LastLogon
+            Pause
+        }
+        '4' {
+            Clear-Host
+            Write-Host "Redémarrage du serveur..." -ForegroundColor Red
+            Start-Process -FilePath "shutdown.exe" -ArgumentList "/r /t 0" -Verb RunAs
+        }
+        '5' {
+            Write-Host "Fermeture du script." -ForegroundColor Magenta
+        }
+        Default {
+            Write-Host "Option invalide. Veuillez réessayer." -ForegroundColor Red
+            Pause
+        }
+    }
+} while ($option -ne '5')
